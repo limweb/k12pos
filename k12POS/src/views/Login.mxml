@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="100%" height="100%"
+		  fontFamily="Tahoma" fontSize="14" fontWeight="bold" fontStyle="normal"
+		  creationComplete="init()"
+		  >
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			
+
+			
+			protected function addClick(event:MouseEvent):void
+			{
+				if(txtLogin.text.length < 8 ) {
+					txtLogin.text += event.target.label;
+					if(txtLogin.text.length == 8 ){
+						chkLogin();
+					}
+				} else {
+				}
+				
+			}
+			
+			protected function delClick(event:MouseEvent):void
+			{
+				if(txtLogin.text.length > 0 ){
+					txtLogin.text =  txtLogin.text.substring(0,txtLogin.text.length-1);
+				} else {
+					
+				}
+				
+			}
+			
+			protected function login(event:MouseEvent):void
+			{
+				 chkLogin();				
+			}
+			
+			private function chkLogin():void {
+				lblStatus.visible = true;
+				if(txtLogin.text == '78945612'){
+					txtLogin.errorString = null;
+					lblStatus.text = "Login success";
+					FlexGlobals.topLevelApplication.vsMain.selectedIndex = 1;
+				} else {
+					txtLogin.errorString = "รหัสผ่านไม่ถูกต้อง";
+					lblStatus.text = "รหัสผ่านไม่ถูกต้อง";
+					
+				}
+			}
+			
+			public function exitClick():void
+			{
+				txtLogin.text = null;
+				lblStatus.visible = false;
+				txtLogin.setFocus();
+				
+			}
+			
+			
+			protected function txtLogin_keyUpHandler(event:KeyboardEvent):void
+			{
+				if(txtLogin.text.length == 8 ){
+					chkLogin();
+				}
+			}
+			
+			protected function init():void
+			{
+				txtLogin.setFocus();
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Rect width="100%" height="100%" horizontalCenter="0" verticalCenter="0">
+		<s:fill>
+			<s:SolidColor color="#090ef8" />
+		</s:fill>
+	</s:Rect>
+	<s:Group width="434" height="388" horizontalCenter="0" verticalCenter="0">
+		<s:Rect width="100%" height="100%" horizontalCenter="0" verticalCenter="0">
+			<s:stroke>
+				<s:SolidColorStroke color="#000000" />
+			</s:stroke>
+			<s:fill>
+				<s:SolidColor color="0xffffff" />
+			</s:fill>
+			<s:filters>
+				<s:DropShadowFilter />
+			</s:filters>
+		</s:Rect>
+		<s:VGroup width="100%" height="100%" horizontalAlign="center" paddingTop="15">
+			<s:Label text="Label" id="lblStatus" visible="false"/>
+			<s:TextInput x="87" width="{keypad.width}" height="50" enabled="true" id="txtLogin"
+						 textAlign="center" displayAsPassword="true" maxChars="8" 
+						 keyUp="txtLogin_keyUpHandler(event)"
+						 />
+			<s:VGroup id="keypad" x="85"  height="280" textAlign="center">
+				<s:HGroup width="100%">
+					<s:Button label="7" height="50" width="80" click="addClick(event)"/>
+					<s:Button label="8" height="50" width="80" click="addClick(event)"/>
+					<s:Button label="9" height="50" width="80" click="addClick(event)"/>
+				</s:HGroup>
+				<s:HGroup width="100%">
+					<s:Button label="4" height="50" width="80" click="addClick(event)"/>
+					<s:Button label="5" height="50" width="80" click="addClick(event)"/>
+					<s:Button label="6" height="50" width="80" click="addClick(event)"/>
+				</s:HGroup>
+				<s:HGroup width="100%">
+					<s:Button label="1" height="50" width="80" click="addClick(event)"/>
+					<s:Button label="2" height="50" width="80" click="addClick(event)"/>
+					<s:Button label="3" height="50" width="80" click="addClick(event)"/>
+				</s:HGroup>
+				<s:HGroup horizontalAlign="right" width="100%">
+					<s:Button  label="0" height="50" width="80"  click="addClick(event)"/>
+					<s:Button  label="DEL" height="50" width="80" click="delClick(event)"/>
+				</s:HGroup>
+				<s:HGroup  width="100%">
+					<s:Button  label="Login" height="50" width="100%" click="login(event)"/>
+					<s:Button  label="Exit" height="50" width="100%" click="exitClick()"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:VGroup>
+	</s:Group>
+</s:Group>
