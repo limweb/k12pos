@@ -5,19 +5,21 @@
 				width="100" height="100" autoDrawBackground="true">
 	<s:states>
 		<s:State name="normal" />
-		<s:State name="hovered" />
+<!--		<s:State name="hovered" />-->
 		<s:State name="selected" />
 	</s:states>
 	<s:Group width="100%" height="100%" >
 		<s:Image x="0" y="0" width="100%" height="100%" horizontalAlign="center" scaleMode="stretch"
 				 source="assets/cuspic/food.jpg" verticalAlign="middle"/>
-		<s:Label horizontalCenter="0" text="{data.dataField1}" textAlign="center"/>
+		<s:Label horizontalCenter="0" text="{data.id}" textAlign="center"/>
+		<s:Label horizontalCenter="0" text="{data.unitPrice}" textAlign="center"
+				 bottom.normal="5" horizontalCenter.normal="0"/>
 	</s:Group>
-	<s:Rect alpha="0.4" width="100%" height="100%" includeIn="hovered">
+<!--	<s:Rect alpha="0.4" width="100%" height="100%" includeIn="hovered">
 		<s:fill>
 			<s:SolidColor color="0x1040f1" />
 		</s:fill>
-	</s:Rect>
+	</s:Rect>-->
 	<s:Rect alpha="0.6" width="100%" height="100%" includeIn="selected">
 		<s:fill>
 			<s:SolidColor color="0x1040f1" />

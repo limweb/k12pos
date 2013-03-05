@@ -16,9 +16,9 @@
 			
 			protected function addClick(event:MouseEvent):void
 			{
-				if(txtLogin.text.length < 8 ) {
+				if(txtLogin.text.length < 1 ) {
 					txtLogin.text += event.target.label;
-					if(txtLogin.text.length == 8 ){
+					if(txtLogin.text.length == 1 ){
 						chkLogin();
 					}
 				} else {
@@ -43,7 +43,7 @@
 			
 			private function chkLogin():void {
 				lblStatus.visible = true;
-				if(txtLogin.text == '78945612'){
+				if(txtLogin.text == '7'){
 					txtLogin.errorString = null;
 					lblStatus.text = "Login success";
 					FlexGlobals.topLevelApplication.vsMain.selectedIndex = 1;
@@ -102,9 +102,9 @@
 		</s:Rect>
 		<s:VGroup width="100%" height="100%" horizontalAlign="center" paddingTop="15">
 			<s:Label text="Label" id="lblStatus" visible="false"/>
-			<s:TextInput x="87" width="{keypad.width}" height="50" enabled="true" id="txtLogin"
+			<s:TextInput x="93" width="248" height="50" enabled="true" id="txtLogin"
 						 textAlign="center" displayAsPassword="true" maxChars="8" 
-						 keyUp="txtLogin_keyUpHandler(event)"
+						 keyUp="txtLogin_keyUpHandler(event)" fontSize="18"
 						 />
 			<s:VGroup id="keypad" x="85"  height="280" textAlign="center">
 				<s:HGroup width="100%">
@@ -122,7 +122,8 @@
 					<s:Button label="2" height="50" width="80" click="addClick(event)"/>
 					<s:Button label="3" height="50" width="80" click="addClick(event)"/>
 				</s:HGroup>
-				<s:HGroup horizontalAlign="right" width="100%">
+				<s:HGroup width="100%" horizontalAlign="right" verticalAlign="middle">
+					<s:Label text="78945612"/>
 					<s:Button  label="0" height="50" width="80"  click="addClick(event)"/>
 					<s:Button  label="DEL" height="50" width="80" click="delClick(event)"/>
 				</s:HGroup>

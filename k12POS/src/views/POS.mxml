@@ -8,13 +8,80 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import models.ProductItem;
+			
+			import mx.collections.ArrayCollection;
 			import mx.core.FlexGlobals;
+			import mx.core.FlexTextField;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable] private var acSaled:ArrayCollection = new ArrayCollection(); 
+			
 			protected function ExitClock(event:MouseEvent):void
 			{
 				FlexGlobals.topLevelApplication.loginId.exitClick();
 				FlexGlobals.topLevelApplication.vsMain.selectedIndex = 0;
 				
 			}
+			
+			private function newSale():void  {
+				acSaled = new ArrayCollection();
+			}
+			
+			protected function AddtoCart(event:MouseEvent):void
+			{
+
+				if(event.currentTarget.selectedItem != null ) {
+					
+						var obj:ProductItem = event.currentTarget.selectedItem as ProductItem;
+						var pm:ProductItem = new ProductItem();
+						var item:int = -1;
+							if(acSaled.length > 0 ){
+								
+								for( var i:int = 0 ; i < acSaled.length ; i++ ) {
+									if(acSaled[i].id == obj.id && acSaled[i].menuType == obj.menuType ){
+										item = i;
+										break;
+									} //end if
+								} // end for 	
+									
+								if(item != -1){
+										acSaled[i].qty += obj.qty;
+										acSaled.refresh();
+								}	else {
+										pm.menuType = obj.menuType;
+										pm.id = obj.id;
+										pm.qty = obj.qty;
+										pm.unitPrice = obj.unitPrice;
+										acSaled.addItem(pm);
+								}
+									
+						} else {
+							pm.menuType = obj.menuType;
+							pm.id = obj.id;
+							pm.qty = obj.qty;
+							pm.unitPrice = obj.unitPrice;
+							acSaled.addItem(pm);
+							acSaled.refresh();
+						}
+				}
+				
+				txtGTotal.text = String(getGtotal());
+			}
+			
+			
+ 			private function getGtotal():Number {
+				var i:int = 0;
+				var gTotal:Number = 0;
+				for(i=0;i<acSaled.length;i++) {
+					gTotal += acSaled[i].totalPrice;	
+				}
+				
+				return gTotal;
+			}
+			
+			
 		]]>
 	</fx:Script>
 	
@@ -42,32 +109,31 @@
 						<mx:Text text="cccccc" color="white" />
 					</s:VGroup>
 				</s:HGroup>
-				<s:DataGrid width="100%" height="100%">
+				
+				<s:DataGrid id="dbSale" dataProvider="{acSaled}" width="100%" height="100%">
 					<s:columns>
 						<s:ArrayList>
-							<s:GridColumn dataField="dataField1" headerText="Item"></s:GridColumn>
-							<s:GridColumn dataField="dataField2" headerText="Qty"></s:GridColumn>
-							<s:GridColumn dataField="dataField3" headerText="Price"></s:GridColumn>
+							<s:GridColumn dataField="id" headerText="Item"></s:GridColumn>
+							<s:GridColumn dataField="qty" headerText="Qty"></s:GridColumn>
+							<s:GridColumn dataField="totalPrice" headerText="Price"></s:GridColumn>
 						</s:ArrayList>
 					</s:columns>
-					<s:typicalItem>
-						<fx:Object dataField1="Sample Data" dataField2="Sample Data"
-								   dataField3="Sample Data"></fx:Object>
-					</s:typicalItem>
-					<s:ArrayList>
-						<fx:Object dataField1="data1" dataField2="1" dataField3="200"></fx:Object>
-						<fx:Object dataField1="data2" dataField2="2" dataField3="300"></fx:Object>
-						<fx:Object dataField1="data3" dataField2="2" dataField3="240"></fx:Object>
-						<fx:Object dataField1="data4" dataField2="1" dataField3="120"></fx:Object>
-					</s:ArrayList>
+
 				</s:DataGrid>
+				
+				
+				
 				<mx:HBox width="100%" height="40" backgroundColor="#3821DF" paddingLeft="10" paddingRight="10" >
 					<s:Button width="100%" height="40" label="Remove Item" enabled="false"/>
 					<s:Button  label="+"  height="40" width="40" />
 					<s:Button  label="-" height="40"  width="40" />
 				</mx:HBox>
 				<mx:VBox width="100%" height="100" backgroundColor="#FFFFFF">
-					
+					<mx:HBox width="100%" backgroundColor="#AAEAF8" horizontalAlign="right"
+							 paddingRight="20" verticalAlign="middle">
+						<s:Label text="Total:" />
+						<mx:Text id="txtGTotal" x="196" width="84" text="0.00" textAlign="right"/>
+					</mx:HBox>
 				</mx:VBox>
 			</s:VGroup>
 						
@@ -79,150 +145,61 @@
 				<s:Button height="36" label=" Exit " click="ExitClock(event)"/>
 			</mx:HBox>
 			<mx:TabNavigator width="100%" height="100%">
-				<s:NavigatorContent width="100%" height="100%" label="  BrackFast     ">
-<!--					<s:Rect width="100%" height="100%">
-						<s:fill>
-							<s:SolidColor color="0x33d5f8" />
-						</s:fill>
-					</s:Rect>-->
-					<s:List width="100%" height="100%" 
-							contentBackgroundAlpha="1" labelField="dataField1" 
-							itemRenderer="itemsRender" 
+				<s:NavigatorContent width="100%" height="100%" label="  BreakFast     ">
+					<s:List width="100%" height="100%" id="lstBreakfast"
+							contentBackgroundAlpha="1" labelField="item"
+							dataProvider="{FlexGlobals.topLevelApplication.acBreakFast}"
+							itemRenderer="itemsRender"  click="AddtoCart(event)"
 							 >
 						<s:layout>
 							<s:TileLayout horizontalGap="5" verticalGap="5"/>
 						</s:layout>
-						<s:typicalItem>
-							<fx:Object dataField1="Sample Data" dataField2="Sample Data"
-									   dataField3="Sample Data"></fx:Object>
-						</s:typicalItem>
-						<s:ArrayList>
-							<fx:Object dataField1="data1" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data2" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data3" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data4" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data5" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data6" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data7" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data8" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data9" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data12" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data13" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data14" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data11" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data22" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data23" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data24" dataField2="1" dataField3="120"></fx:Object>
-						</s:ArrayList>
 					</s:List>
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="  Lunch  ">
 					<s:List width="100%" height="100%" 
-							contentBackgroundAlpha="1" labelField="dataField1" 
-							itemRenderer="itemsRender" 
+							contentBackgroundAlpha="1" labelField="item"
+							dataProvider="{FlexGlobals.topLevelApplication.acLunch}"
+							itemRenderer="itemsRender"  click="AddtoCart(event)" 
 							>
 						<s:layout>
 							<s:TileLayout horizontalGap="5" verticalGap="5"/>
 						</s:layout>
-						<s:typicalItem>
-							<fx:Object dataField1="Sample Data" dataField2="Sample Data"
-									   dataField3="Sample Data"></fx:Object>
-						</s:typicalItem>
-						<s:ArrayList>
-							<fx:Object dataField1="data1" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data2" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data3" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data4" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data9" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data12" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data13" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data14" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data11" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data22" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data23" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data24" dataField2="1" dataField3="120"></fx:Object>
-						</s:ArrayList>
 					</s:List>
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="  Services  ">
 					<s:List width="100%" height="100%" 
-							contentBackgroundAlpha="1" labelField="dataField1" 
-							itemRenderer="itemsRender" 
+							contentBackgroundAlpha="1" labelField="item"
+							dataProvider="{FlexGlobals.topLevelApplication.acServices}"
+							itemRenderer="itemsRender"   click="AddtoCart(event)"
 							>
 						<s:layout>
 							<s:TileLayout horizontalGap="5" verticalGap="5"/>
 						</s:layout>
-						<s:typicalItem>
-							<fx:Object dataField1="Sample Data" dataField2="Sample Data"
-									   dataField3="Sample Data"></fx:Object>
-						</s:typicalItem>
-						<s:ArrayList>
-							<fx:Object dataField1="data1" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data2" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data3" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data4" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data5" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data6" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data7" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data8" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data9" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data12" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data13" dataField2="2" dataField3="240"></fx:Object>
-						</s:ArrayList>
 					</s:List>
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="MENU 4">
 					<s:List width="100%" height="100%" 
-							contentBackgroundAlpha="1" labelField="dataField1" 
-							itemRenderer="itemsRender" 
+							contentBackgroundAlpha="1" labelField="item"
+							dataProvider="{FlexGlobals.topLevelApplication.acMenu4}"
+							itemRenderer="itemsRender"  click="AddtoCart(event)" 
 							>
 						<s:layout>
 							<s:TileLayout horizontalGap="5" verticalGap="5"/>
 						</s:layout>
-						<s:typicalItem>
-							<fx:Object dataField1="Sample Data" dataField2="Sample Data"
-									   dataField3="Sample Data"></fx:Object>
-						</s:typicalItem>
-						<s:ArrayList>
-							<fx:Object dataField1="data1" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data2" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data3" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data4" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data5" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data6" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data14" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data11" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data22" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data23" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data24" dataField2="1" dataField3="120"></fx:Object>
-						</s:ArrayList>
 					</s:List>
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="MENU 5">
 					<s:List width="100%" height="100%" 
-							contentBackgroundAlpha="1" labelField="dataField1" 
-							itemRenderer="itemsRender" 
+							contentBackgroundAlpha="1" labelField="item" 
+							itemRenderer="itemsRender"   click="AddtoCart(event)"
+							dataProvider="{FlexGlobals.topLevelApplication.acMenu5}"
 							>
 						<s:layout>
-							<s:TileLayout horizontalGap="5" verticalGap="5"/>
+							<s:TileLayout horizontalGap="5" verticalGap="5"
+										  requestedColumnCount="4" 
+										  />
 						</s:layout>
-						<s:typicalItem>
-							<fx:Object dataField1="Sample Data" dataField2="Sample Data"
-									   dataField3="Sample Data"></fx:Object>
-						</s:typicalItem>
-						<s:ArrayList>
-							<fx:Object dataField1="data1" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data2" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data3" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data4" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data5" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data6" dataField2="2" dataField3="300"></fx:Object>
-							<fx:Object dataField1="data7" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data8" dataField2="1" dataField3="120"></fx:Object>
-							<fx:Object dataField1="data9" dataField2="1" dataField3="200"></fx:Object>
-							<fx:Object dataField1="data23" dataField2="2" dataField3="240"></fx:Object>
-							<fx:Object dataField1="data24" dataField2="1" dataField3="120"></fx:Object>
-						</s:ArrayList>
 					</s:List>
 				</s:NavigatorContent>
 			</mx:TabNavigator>
