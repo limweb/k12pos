@@ -8,6 +8,7 @@
 			   >
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		// test 
 	</fx:Declarations>
 	<fx:Script source="datas/DataTest.as" />
 	<fx:Script>
